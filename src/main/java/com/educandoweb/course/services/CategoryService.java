@@ -10,15 +10,15 @@ import java.util.Optional;
 
 @Service
 public class CategoryService {
-
     @Autowired
-    private CategoryRepository repository;
+    private CategoryRepository categoryRepository;
 
-    public List<Category> findAll(){
-        return repository.findAll();
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
     }
-    public Category findById(Long id){
-        Optional<Category> obj = repository.findById(id);
+
+    public Category findById(Long id) {
+        Optional<Category> obj = categoryRepository.findById(id);
         return obj.get();
     }
 }

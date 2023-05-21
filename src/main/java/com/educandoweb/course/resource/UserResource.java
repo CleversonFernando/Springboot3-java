@@ -13,34 +13,38 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/users")
 public class UserResource {
-
+    public static final String ID = "/{id}";
     @Autowired
-    private UserService service;
+    private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll(){
-        List<User> list = service.findAll();
+    public ResponseEntity<List<User>> findAll() {
+        List<User> list = userService.findAll();
         return ResponseEntity.ok().body(list);
     }
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id){
-        User obj = service.findById(id);
+
+    @GetMapping(value = ID)
+    public ResponseEntity<User> findById(@PathVariable Long id) {
+        User obj = userService.findById(id);
         return ResponseEntity.ok().body(obj);
     }
+
     @PostMapping
-    public ResponseEntity<User> insert(@RequestBody User obj){
-        obj = service.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+    public ResponseEntity<User> insert(@RequestBody User obj) {
+        obj = userService.insert(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path(ID).buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(obj);
     }
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        service.delete(id);
+
+    @DeleteMapping(value = ID)
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        userService.delete(id);
         return ResponseEntity.noContent().build();
     }
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj){
-        obj = service.Update(id, obj);
+
+    @PutMapping(value = ID)
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj) {
+        obj = userService.Update(id, obj);
         return ResponseEntity.ok().body(obj);
     }
 }

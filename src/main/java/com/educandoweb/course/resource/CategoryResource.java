@@ -14,18 +14,18 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/categories")
 public class CategoryResource {
-
     @Autowired
-    private CategoryService service;
+    private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> findAll(){
-        List<Category> list = service.findAll();
+    public ResponseEntity<List<Category>> findAll() {
+        List<Category> list = categoryService.findAll();
         return ResponseEntity.ok().body(list);
     }
+
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Category> findById(@PathVariable Long id){
-        Category obj = service.findById(id);
+    public ResponseEntity<Category> findById(@PathVariable Long id) {
+        Category obj = categoryService.findById(id);
         return ResponseEntity.ok().body(obj);
     }
 }

@@ -15,29 +15,28 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
 
     public List<User> findAll() {
-        return repository.findAll();
+        return userRepository.findAll();
     }
 
     public User findById(Long id) {
-        Optional<User> obj = repository.findById(id);
+        Optional<User> obj = userRepository.findById(id);
         return obj.orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
     public User insert(User obj) {
-        return repository.save(obj);
+        return userRepository.save(obj);
     }
 
     public User Update(Long id, User obj) {
         try {
-            User entity = repository.getReferenceById(id);
+            User entity = userRepository.getReferenceById(id);
             updateData(entity, obj);
-            return repository.save(entity);
-        }catch (EntityNotFoundException e){
+            return userRepository.save(entity);
+        } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException(id);
         }
     }
@@ -50,10 +49,10 @@ public class UserService {
 
     public void delete(Long id) {
         try {
-            repository.deleteById(id);
+            userRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new ResourceNotFoundException(id);
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         }
     }
