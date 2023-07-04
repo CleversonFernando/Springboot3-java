@@ -20,24 +20,19 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 class UserServiceTest {
 
-    public static final String NAME = "Paulo";
     public static final Long ID = 1L;
+    public static final String NAME = "Paulo";
     public static final String EMAIL = "paulo@email.com";
     public static final String PHONE = "999999999";
     public static final String PASSWORD = "123";
     public static final int INDEX = 0;
     public static final String OBJETO_NAO_ENCONTRADO = "Resource not found id. ";
-    public static final long USER_TO_UPDATE_ID = 0L;
-    public static final String USER_TO_UPDATE_NAME = "Maria";
-    public static final String USER_TO_UPDATE_EMAIL = "maria@email.com";
-    public static final String USER_TO_UPDATE_PHONE = "888888888";
-    public static final String USER_TO_UPDATE_PASSWORD = "321";
+
     @InjectMocks
     private UserService userService;
     @Mock
     private UserRepository userRepository;
     private User user;
-    private User userToUpdate;
     private Optional<User> optionalUser;
 
     @BeforeEach
@@ -105,18 +100,18 @@ class UserServiceTest {
 
     @Test
     void whenUpdateThenReturnSuccess() {
-        when(userRepository.getReferenceById(anyLong())).thenReturn(user);
-        when(userRepository.save(any())).thenReturn(userToUpdate);
+        when(userRepository.getReferenceById(ID)).thenReturn(user);
+        when(userRepository.save(any())).thenReturn(user);
 
-        User response = userService.update(ID, userToUpdate);
+        User response = userService.update(ID, user);
 
         assertNotNull(response);
         assertEquals(User.class, response.getClass());
-        assertEquals(USER_TO_UPDATE_ID, response.getId());
-        assertEquals(USER_TO_UPDATE_NAME, response.getName());
-        assertEquals(USER_TO_UPDATE_EMAIL, response.getEmail());
-        assertEquals(USER_TO_UPDATE_PHONE, response.getPhone());
-        assertEquals(USER_TO_UPDATE_PASSWORD, response.getPassword());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PHONE, response.getPhone());
+        assertEquals(PASSWORD, response.getPassword());
     }
 
     @Test
@@ -141,7 +136,6 @@ class UserServiceTest {
 
     private void startUser() {
         user = new User(ID, NAME, EMAIL, PHONE, PASSWORD);
-        userToUpdate = new User(USER_TO_UPDATE_ID, USER_TO_UPDATE_NAME, USER_TO_UPDATE_EMAIL, USER_TO_UPDATE_PHONE, USER_TO_UPDATE_PASSWORD);
         optionalUser = Optional.of(new User(ID, NAME, EMAIL, PHONE, PASSWORD));
     }
 }
