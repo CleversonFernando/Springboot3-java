@@ -3,16 +3,18 @@ package com.educandoweb.course.services;
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepository;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.Answers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -27,11 +29,10 @@ class UserServiceTest {
     public static final String PASSWORD = "123";
     public static final int INDEX = 0;
     public static final String OBJETO_NAO_ENCONTRADO = "Resource not found id. ";
-    private static final Long ID_TO_UPDATE = 2L;
     private static final String NAME_TO_UPDATE = "Fernando";
     private static final String EMAIL_TO_UPDATE = "fernando@gmail.com";
     private static final String PHONE_TO_UPDATE = "88888888";
-    private static final String PASSWORD_TO_UPDATE = "5432";
+    private static final Long ID_NOT_FOUND = 0L;
 
     @InjectMocks
     private UserService userService;
@@ -121,17 +122,17 @@ class UserServiceTest {
         assertEquals(PASSWORD, response.getPassword());
     }
 
-//    @Test
-//    void whenUpdateThenReturnResourceNotFoundException() {
-//        when(userRepository.getReferenceById(anyLong())).thenThrow(new ResourceNotFoundException(ID));
-//
-//        try {
-//            userService.update(ID, user);
-//        } catch (Exception e) {
-//            assertEquals(ResourceNotFoundException.class, e.getClass());
-//            assertEquals(OBJETO_NAO_ENCONTRADO + ID, e.getMessage());
-//        }
-//    }
+    @Test
+    void whenUpdateThenReturnResourceNotFoundException() {
+        when(userRepository.getReferenceById(anyLong())).thenThrow(new ResourceNotFoundException(ID));
+
+        try {
+            userService.update(ID_NOT_FOUND, user);
+        } catch (Exception e) {
+            assertEquals(ResourceNotFoundException.class, e.getClass());
+            assertEquals(OBJETO_NAO_ENCONTRADO + ID, e.getMessage());
+        }
+    }
 
     @Test
     void whenDeleteWithSuccess() {
