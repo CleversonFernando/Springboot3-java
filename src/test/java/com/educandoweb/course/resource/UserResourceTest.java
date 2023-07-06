@@ -90,14 +90,15 @@ class UserResourceTest {
 
     @Test
     void whenDeleteThenReturnSuccess() {
-        doNothing().when(userService).delete(anyLong());
-
+        when(userService.delete(ID)).thenReturn("Success");
         ResponseEntity<Void> response = userResource.delete(ID);
 
         assertNotNull(response);
         assertEquals(ResponseEntity.class, response.getClass());
         verify(userService, times(1)).delete(ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        assertEquals(null, userService.findById(ID));
     }
 
     @Test

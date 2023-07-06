@@ -47,7 +47,7 @@ public class UserService {
         entity.setPhone(obj.getPhone());
     }
 
-    public void delete(Long id) {
+    public String delete(Long id) {
         try {
             userRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
@@ -55,5 +55,6 @@ public class UserService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException(e.getMessage());
         }
+        return "Success";
     }
 }
