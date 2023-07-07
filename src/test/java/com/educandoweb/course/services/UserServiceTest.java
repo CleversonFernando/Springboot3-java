@@ -4,6 +4,7 @@ import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepository;
 import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
+import org.hibernate.action.internal.EntityActionVetoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,13 +126,14 @@ class UserServiceTest {
 
     @Test
     void whenUpdateThenReturnResourceNotFoundException() {
-        when(userRepository.getReferenceById(anyLong())).thenThrow(new ResourceNotFoundException(ID));
+        doThrow(EntityNotFoundException.class).when(userRepository).getReferenceById(ID_NOT_FOUND);
 
         try {
             userService.update(ID_NOT_FOUND, user);
         } catch (Exception e) {
             assertEquals(ResourceNotFoundException.class, e.getClass());
-            assertEquals(OBJETO_NAO_ENCONTRADO + ID, e.getMessage());
+            assertEquals(OBJETO_NAO_ENCONTRADO + ID_NOT_FOUND, e.getMessage());
+            verify(userRepository).getReferenceById(ID_NOT_FOUND);
         }
     }
 
