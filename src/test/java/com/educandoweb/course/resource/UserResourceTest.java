@@ -13,8 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -90,15 +89,13 @@ class UserResourceTest {
 
     @Test
     void whenDeleteThenReturnSuccess() {
-        when(userService.delete(ID)).thenReturn("Success");
         ResponseEntity<Void> response = userResource.delete(ID);
 
+        verify(userService).delete(ID);
         assertNotNull(response);
         assertEquals(ResponseEntity.class, response.getClass());
-        verify(userService, times(1)).delete(ID);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-
-        assertEquals(null, userService.findById(ID));
+        assertNull(response.getBody());
     }
 
     @Test

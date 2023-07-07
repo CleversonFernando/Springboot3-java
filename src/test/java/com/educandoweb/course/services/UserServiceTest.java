@@ -2,19 +2,20 @@ package com.educandoweb.course.services;
 
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepository;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -39,6 +40,7 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
     private User user;
+    private User entity;
     private Optional<User> optionalUser;
 
     @BeforeEach
@@ -106,8 +108,6 @@ class UserServiceTest {
 
     @Test
     void whenUpdateThenReturnSuccess() {
-        User entity = new User(NAME_TO_UPDATE, EMAIL_TO_UPDATE, PHONE_TO_UPDATE);
-
         when(userRepository.getReferenceById(user.getId())).thenReturn((user));
         when(userRepository.save(any())).thenReturn(user);
 
@@ -136,14 +136,35 @@ class UserServiceTest {
 
     @Test
     void whenDeleteWithSuccess() {
-        mock(UserRepository.class, CALLS_REAL_METHODS);
-        doAnswer(Answers.CALLS_REAL_METHODS).when(userRepository).deleteById(anyLong());
+        userService.delete(ID);
+        verify(userRepository).deleteById(ID);
+    }
 
-        assertThat(userService.delete(ID)).isEqualTo("Success");
+    @Test
+    void whenDeleteThenThrowResourceNotFoundException() {
+        doThrow(EmptyResultDataAccessException.class).when(userRepository).deleteById(ID_NOT_FOUND);
+
+        try {
+            userService.delete(ID_NOT_FOUND);
+        } catch (Exception e) {
+            assertEquals(ResourceNotFoundException.class, e.getClass());
+            assertEquals(OBJETO_NAO_ENCONTRADO + ID_NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @Test
+    void whenDeleteThenReturnDatabaseException() {
+        doThrow(DataIntegrityViolationException.class).when(userRepository).deleteById(ID);
+        try {
+            userService.delete(ID);
+        } catch (Exception e) {
+            assertEquals(DatabaseException.class, e.getClass());
+        }
     }
 
     private void startUser() {
         user = new User(ID, NAME, EMAIL, PHONE, PASSWORD);
+        entity = new User(NAME_TO_UPDATE, EMAIL_TO_UPDATE, PHONE_TO_UPDATE);
         optionalUser = Optional.of(new User(ID, NAME, EMAIL, PHONE, PASSWORD));
     }
 }
